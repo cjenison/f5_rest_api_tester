@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 ## Big Config Tool
 ## Author: Chad Jenison (c.jenison@f5.com)
@@ -74,49 +74,49 @@ else:
     commandPostfix = ''
 
 if args.add or args.addandremove:
-	configInstance = 1
-	port = 1
-	while configInstance <= args.num:
-		print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
-		stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s}%s' % (commandPrefix, configInstance, port, port, commandPostfix))
-		exit_status = stdout.channel.recv_exit_status()
-		for line in stderr.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-		for line in stdout.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-		stdin, stdout, stderr = sshSession.exec_command('%screate ltm virtual virtual%s destination 10.0.0.1:%s pool pool%s%s' % (commandPrefix, configInstance, port, configInstance, commandPostfix))
-		exit_status = stdout.channel.recv_exit_status()
-		for line in stderr.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-		for line in stdout.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-		configInstance += 1
+    configInstance = 1
+    port = 10001
+    while configInstance <= args.num:
+        print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
+        stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s}%s' % (commandPrefix, configInstance, port, port, commandPostfix))
+        exit_status = stdout.channel.recv_exit_status()
+        for line in stderr.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+        for line in stdout.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+        stdin, stdout, stderr = sshSession.exec_command('%screate ltm virtual virtual%s destination 10.0.0.1:%s pool pool%s%s' % (commandPrefix, configInstance, port, configInstance, commandPostfix))
+        exit_status = stdout.channel.recv_exit_status()
+        for line in stderr.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+        for line in stdout.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+        configInstance += 1
         port += 1
 
 if args.remove or args.addandremove:
-	configInstance = 1
-	while configInstance <= args.num:
-		error = 0
-		print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
-		stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm virtual virtual%s; delete ltm pool pool%s%s' % (commandPrefix, configInstance, configInstance, commandPostfix))
-		exit_status = stdout.channel.recv_exit_status()
-		for line in stderr.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-				error = 1
-		for line in stdout.read().splitlines():
-			if line:
-				print ('configInstance: %s - stderr: %s' % (configInstance, line))
-				error = 1
-		if error:
-			stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm virtual virtual%s%s' % (commandPrefix, configInstance, commandPostfix))
-			stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm pool pool%s%s' % (commandPrefix, configInstance, commandPostfix))
-		configInstance += 1
-		error = 0
+    configInstance = 1
+    while configInstance <= args.num:
+        error = 0
+        print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
+        stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm virtual virtual%s; delete ltm pool pool%s%s' % (commandPrefix, configInstance, configInstance, commandPostfix))
+        exit_status = stdout.channel.recv_exit_status()
+        for line in stderr.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+                error = 1
+        for line in stdout.read().splitlines():
+            if line:
+                print ('configInstance: %s - stderr: %s' % (configInstance, line))
+                error = 1
+        if error:
+            stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm virtual virtual%s%s' % (commandPrefix, configInstance, commandPostfix))
+            stdin, stdout, stderr = sshSession.exec_command('%sdelete ltm pool pool%s%s' % (commandPrefix, configInstance, commandPostfix))
+        configInstance += 1
+        error = 0
 
 if args.add or args.remove:
     queryString = 'Do you want to save changes to configuration files?'
