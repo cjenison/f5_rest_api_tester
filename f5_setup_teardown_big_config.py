@@ -75,7 +75,7 @@ else:
 
 if args.add or args.addandremove:
 	configInstance = 1
-    port = 10001
+	port = 1
 	while configInstance <= args.num:
 		print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
 		stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s}%s' % (commandPrefix, configInstance, port, port, commandPostfix))
