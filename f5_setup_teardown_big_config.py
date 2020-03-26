@@ -26,7 +26,7 @@ def query_yes_no(question, default="no"):
         raise ValueError("invalid default answer: '%s'" % default)
     while 1:
         sys.stdout.write(question + prompt)
-        choice = raw_input().lower()
+        choice = input().lower()
         if default is not None and choice == '':
            return valid[default]
         elif choice in valid.keys():
@@ -78,7 +78,7 @@ if args.add or args.addandremove:
     port = 10001
     while configInstance <= args.num:
         print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
-        stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s}%s' % (commandPrefix, configInstance, port, port, commandPostfix))
+        stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s 192.168.1.3:%s 192.168.1.4:%s }%s' % (commandPrefix, configInstance, port, port, port, port, commandPostfix))
         exit_status = stdout.channel.recv_exit_status()
         for line in stderr.read().splitlines():
             if line:
@@ -86,7 +86,7 @@ if args.add or args.addandremove:
         for line in stdout.read().splitlines():
             if line:
                 print ('configInstance: %s - stderr: %s' % (configInstance, line))
-        stdin, stdout, stderr = sshSession.exec_command('%screate ltm virtual virtual%s destination 10.0.0.1:%s pool pool%s%s' % (commandPrefix, configInstance, port, configInstance, commandPostfix))
+        stdin, stdout, stderr = sshSession.exec_command('%screate ltm virtual virtual%s destination 10.0.0.1:%s profiles add { f5-tcp-lan } pool pool%s%s' % (commandPrefix, configInstance, port, configInstance, commandPostfix))
         exit_status = stdout.channel.recv_exit_status()
         for line in stderr.read().splitlines():
             if line:
