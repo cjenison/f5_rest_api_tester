@@ -53,6 +53,7 @@ mode.add_argument('--add', action='store_true', help='build up configuration')
 mode.add_argument('--remove', action='store_true', help='clean up configuration')
 mode.add_argument('--addandremove', action='store_true', help='build up configuration then remove')
 parser.add_argument('--num', type=int, help='Number of Pools and Virtuals to create', required=True)
+parser.add_argument('--pooldigit', type=int, help='Digit to use in Pool addresses 10.106.30.2x1 [x]', required=True)
 parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self IP', required=True)
 parser.add_argument('--user', help='username to use for authentication', required=True)
 
@@ -78,7 +79,7 @@ if args.add or args.addandremove:
     port = 10001
     while configInstance <= args.num:
         print ('configInstance: %s ;args.num: %s' % (configInstance, args.num))
-        stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 192.168.1.1:%s 192.168.1.2:%s 192.168.1.3:%s 192.168.1.4:%s }%s' % (commandPrefix, configInstance, port, port, port, port, commandPostfix))
+        stdin, stdout, stderr = sshSession.exec_command('%screate ltm pool pool%s monitor tcp_half_open members add { 10.106.30.2%s1:%s 10.106.30.2%s2:%s 10.106.30.2%s3:%s 10.106.30.2%s4:%s }%s' % (commandPrefix, configInstance, args.pooldigit, port, args.pooldigit, port, args.pooldigit, port, args.pooldigit, port, commandPostfix))
         exit_status = stdout.channel.recv_exit_status()
         for line in stderr.read().splitlines():
             if line:
