@@ -103,4 +103,4 @@ if args.topskip:
             itemsretrieved = len(virtuals['items'])
             print ('Items retrieved: %s' % (itemsretrieved))
             virtualpage = bip.get('%s/ltm/virtual?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
-            virtuals.add(virtualpage['items'])
+            virtuals['items'].add(virtualpage['items'])
