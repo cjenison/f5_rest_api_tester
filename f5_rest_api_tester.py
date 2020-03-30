@@ -41,6 +41,9 @@ parser = argparse.ArgumentParser(description='A tool to identify expiring and so
 parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self IP', required=True)
 parser.add_argument('--user', help='username to use for authentication', required=True)
 parser.add_argument('--loops', help='Number of loops', type=int, default=1)
+parser.add_argument('--poolmembers', help='Number of pool members to create', type=int, default=2)
+parser.add_argument('--poolipprefix', help='IP Prefix for pool members', type, default="192.168.100.10")
+parser.add_argument('--buildconfig', help='Add pool and virtual in each loop', action='store_true')
 parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
 parser.add_argument('--itemoutput', help='Print item names', default=False)
 parser.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
@@ -49,6 +52,8 @@ parser.add_argument('--topskip', action='store_true', help='Retrieve Config Obje
 args = parser.parse_args()
 contentJsonHeader = {'Content-Type': "application/json"}
 filename = ''
+poolprefix = 'pool'
+virtualprefix = 'virtual'
 
 def convert_bigip_path(path_to_replace):
     return path_to_replace.replace("/", "~")
@@ -89,18 +94,24 @@ requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
 singlerequesttotal = 0
-topskiptotal = 0
 for loop in range(1,args.loops):
+    createpool = True
+    createvirtual = True
+    port = 10000 + loop
     if args.singlerequest:
         start = time.time()
         virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
         print ('Virtual Count: %s' % (len(virtuals['items'])))
         for virtual in virtuals['items']:
+            if virtual['name'] = '%s%s' % (virtualprefix, loop)
+                createvirtual = False
             if args.itemoutput:
                 print('Virtual Name: %s' % (virtual['name']))
         pools = bip.get('%s/ltm/pool' % (url_base) ).json()
         print ('Pool Count: %s' % (len(pools['items'])))
         for pool in pools['items']:
+            if pool['name'] = '%s%s' % (poolprefix, loop)
+                createpool = False
             if args.itemoutput:
                 print('Pool Name: %s' % (pool['name']))
         end = time.time()
@@ -108,7 +119,24 @@ for loop in range(1,args.loops):
         singlerequesttotal += runtime
         print ('Single Request Run Time: %s' % (runtime))
         print ('Single Request Total Runtime: %s' % (singlerequesttotal))
+    if createpool and createvirtual:
+        poolDict = {}
+        poolDict['name'] = '%s%s' % (poolprefix, loop)
+        poolDict['monitor'] = '/Common/tcp_half_open'
+        bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+        for member in range(1,args.poolmembers):
+            memberDict = {}
+            memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+            bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, loop), headers=contentJsonHeader, data=json.dumps(memberDict))
+        virtualDict = {}
+        virtualDict['name'] = '%s%s' % (virtualprefix, loop)
+        virtualDict['destination'] = '10.0.0.1:%s' % (port)
+        virtualDict['pool'] = '%s%s' % (poolprefix, loop)
+        virtualDict['profiles'] = 'f5-tcp-lan'
+        bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
 
+topskiptotal = 0
+for loop in range(1,args.loops):
     if args.topskip:
         end = time.time()
         virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
