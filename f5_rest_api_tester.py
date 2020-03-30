@@ -103,14 +103,14 @@ for loop in range(1,args.loops):
         virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
         print ('Virtual Count: %s' % (len(virtuals['items'])))
         for virtual in virtuals['items']:
-            if virtual['name'] = '%s%s' % (virtualprefix, loop)
+            if virtual['name'] == '%s%s' % (virtualprefix, loop)
                 createvirtual = False
             if args.itemoutput:
                 print('Virtual Name: %s' % (virtual['name']))
         pools = bip.get('%s/ltm/pool' % (url_base) ).json()
         print ('Pool Count: %s' % (len(pools['items'])))
         for pool in pools['items']:
-            if pool['name'] = '%s%s' % (poolprefix, loop)
+            if pool['name'] == '%s%s' % (poolprefix, loop)
                 createpool = False
             if args.itemoutput:
                 print('Pool Name: %s' % (pool['name']))
