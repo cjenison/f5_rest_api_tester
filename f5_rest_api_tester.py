@@ -88,9 +88,9 @@ bip.verify = False
 requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
+singlerequesttotal = 0
+topskiptotal = 0
 for loop in range(1,args.loops):
-    singlerequesttotal = 0
-    topskiptotal = 0
     if args.singlerequest:
         start = time.time()
         virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
