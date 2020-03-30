@@ -42,7 +42,7 @@ parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self
 parser.add_argument('--user', help='username to use for authentication', required=True)
 parser.add_argument('--loops', help='Number of loops', type=int, default=1)
 parser.add_argument('--poolmembers', help='Number of pool members to create', type=int, default=2)
-parser.add_argument('--poolipprefix', help='IP Prefix for pool members', type, default="192.168.100.10")
+parser.add_argument('--poolipprefix', help='IP Prefix for pool members', default="192.168.100.10")
 parser.add_argument('--buildconfig', help='Add pool and virtual in each loop', action='store_true')
 parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
 parser.add_argument('--itemoutput', help='Print item names', default=False)
