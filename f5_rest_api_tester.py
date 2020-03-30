@@ -89,7 +89,7 @@ requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
 if args.singlerequest:
-    start = time.gmtime()
+    start = time.time()
     virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
     print ('Virtual Count: %s' % (len(virtuals['items'])))
     for virtual in virtuals['items']:
@@ -100,12 +100,12 @@ if args.singlerequest:
     for pool in pools['items']:
         if args.itemoutput:
             print('Pool Name: %s' % (pool['name']))
-    end = time.gmtime()
+    end = time.time()
     runtime = end - start
     print ('Single Request Run Time: %s' % (runtime))
 
 if args.topskip:
-    end = time.gmtime()
+    end = time.time()
     virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
     if virtuals.get('nextLink'):
         done = False
@@ -141,6 +141,6 @@ if args.topskip:
     for item in pools['items']:
         if args.itemoutput:
             print ('Pool Name: %s' % (item['name']))
-    end = time.gmtime()
+    end = time.time()
     runtime = end - start
     print ('Top/Skip Run Time: %s' % (runtime))
