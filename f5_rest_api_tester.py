@@ -42,9 +42,8 @@ parser.add_argument('--user', help='username to use for authentication', require
 parser.add_argument('--loops', help='Number of loops [adding config objects]')
 parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
 parser.add_argument('--itemoutput', help='Print item names', default=False)
-retrievemode = parser.add_mutually_exclusive_group()
-retrievemode.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
-retrievemode.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
+parser.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
+parser.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
 
 args = parser.parse_args()
 contentJsonHeader = {'Content-Type': "application/json"}
@@ -89,6 +88,7 @@ requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
 if args.singlerequest:
+    start = time.gmtime()
     virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
     print ('Virtual Count: %s' % (len(virtuals['items'])))
     for virtual in virtuals['items']:
@@ -99,8 +99,12 @@ if args.singlerequest:
     for pool in pools['items']:
         if args.itemoutput:
             print('Pool Name: %s' % (pool['name']))
+    end = time.gmtime()
+    runtime = end - start
+    print ('Single Request Run Time: %s' % (runtime))
 
 if args.topskip:
+    end = time.gmtime()
     virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
     if virtuals.get('nextLink'):
         done = False
@@ -136,3 +140,6 @@ if args.topskip:
     for item in pools['items']:
         if args.itemoutput:
             print ('Pool Name: %s' % (item['name']))
+    end = time.gmtime()
+    runtime = end - start
+    print ('Top/Skip Run Time: %s' % (runtime))
