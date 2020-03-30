@@ -98,7 +98,7 @@ if args.singlerequest:
 if args.topskip:
     virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
     if virtuals.get('nextLink'):
-        while (! done ):
+        while (not done ):
             itemsretrieved = len(virtuals['items'])
             print ('Items retrieved: %s' % (itemsretrieved))
             virtualpage = bip.get('%s/ltm/virtual?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
