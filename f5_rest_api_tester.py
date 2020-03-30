@@ -110,6 +110,7 @@ if args.topskip:
             if not virtualpage.get('nextLink'):
                 done = True
                 print ('Got all items')
+    print ('Virtual Count: %s' % (len(virtuals['items'])))
     for item in virtuals['items']:
         print ('Virtual Name: %s' % (item['name']))
     pools = bip.get('%s/ltm/pool?$top=%s' % (url_base, args.items) ).json()
@@ -125,3 +126,6 @@ if args.topskip:
             #virtuals['items'].append(virtualpage['items'])
             if not poolpage.get('nextLink'):
                 done = True
+    print ('Pool Count: %s' % (len(pools['items'])))
+    for item in pools['items']:
+        print ('Pool Name: %s' % (item['name']))
