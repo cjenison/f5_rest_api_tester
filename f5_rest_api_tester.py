@@ -40,7 +40,7 @@ parser = argparse.ArgumentParser(description='A tool to identify expiring and so
 parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self IP', required=True)
 parser.add_argument('--user', help='username to use for authentication', required=True)
 parser.add_argument('--loops', help='Number of loops [adding config objects]', required=True)
-parser.add_argument('--items' help='Items to retrieve when using topskip mode', default=50)
+parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
 retrievemode = parser.add_mutually_exclusive_group()
 retrievemode.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
 retrievemode.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
