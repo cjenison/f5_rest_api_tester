@@ -110,3 +110,5 @@ if args.topskip:
             if not virtualpage.get('nextLink'):
                 done = True
                 print ('Got all items')
+    for item in virtuals['items']:
+        print ('virtual name: %s' % (item['name']))
