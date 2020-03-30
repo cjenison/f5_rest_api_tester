@@ -107,6 +107,7 @@ for loop in range(1,args.loops):
         runtime = end - start
         singlerequesttotal += runtime
         print ('Single Request Run Time: %s' % (runtime))
+        print ('Single Request Total Runtime: %s' % (singlerequesttotal))
 
     if args.topskip:
         end = time.time()
@@ -149,6 +150,7 @@ for loop in range(1,args.loops):
         runtime = end - start
         print ('Top/Skip Run Time: %s' % (runtime))
         topskiptotal += runtime
+        print ('Top Skip Total Runtime: %s' % (topskiptotal))
 
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
 print ('Top Skip Total Runtime: %s' % (topskiptotal))
