@@ -41,6 +41,7 @@ parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self
 parser.add_argument('--user', help='username to use for authentication', required=True)
 parser.add_argument('--loops', help='Number of loops [adding config objects]')
 parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
+parser.add_argument('--itemoutput', help='Print item names', default=False)
 retrievemode = parser.add_mutually_exclusive_group()
 retrievemode.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
 retrievemode.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
@@ -89,11 +90,15 @@ url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
 if args.singlerequest:
     virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
+    print ('Virtual Count: %s' % (len(virtuals['items'])))
     for virtual in virtuals['items']:
-        print('Virtual Name: %s' % (virtual['name']))
+        if args.itemoutput:
+            print('Virtual Name: %s' % (virtual['name']))
     pools = bip.get('%s/ltm/pool' % (url_base) ).json()
+    print ('Pool Count: %s' % (len(pools['items'])))
     for pool in pools['items']:
-        print('Pool Name: %s' % (pool['name']))
+        if args.itemoutput:
+            print('Pool Name: %s' % (pool['name']))
 
 if args.topskip:
     virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
@@ -101,26 +106,27 @@ if args.topskip:
         done = False
         while (not done ):
             itemsretrieved = len(virtuals['items'])
-            print ('Items retrieved: %s' % (itemsretrieved))
+            #print ('Items retrieved: %s' % (itemsretrieved))
             virtualpage = bip.get('%s/ltm/virtual?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
-            print ('virtualpage item count: %s' % (len(virtualpage['items'])))
+            #print ('virtualpage item count: %s' % (len(virtualpage['items'])))
             for item in virtualpage['items']:
                 virtuals['items'].append(item)
             #virtuals['items'].append(virtualpage['items'])
             if not virtualpage.get('nextLink'):
                 done = True
-                print ('Got all items')
+                #print ('Got all items')
     print ('Virtual Count: %s' % (len(virtuals['items'])))
     for item in virtuals['items']:
-        print ('Virtual Name: %s' % (item['name']))
+        if args.itemoutput:
+            print ('Virtual Name: %s' % (item['name']))
     pools = bip.get('%s/ltm/pool?$top=%s' % (url_base, args.items) ).json()
     if pools.get('nextLink'):
         done = False
         while (not done ):
             itemsretrieved = len(pools['items'])
-            print ('Items retrieved: %s' % (itemsretrieved))
+            #print ('Items retrieved: %s' % (itemsretrieved))
             poolpage = bip.get('%s/ltm/pool?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
-            print ('poolpage item count: %s' % (len(poolpage['items'])))
+            #print ('poolpage item count: %s' % (len(poolpage['items'])))
             for item in poolpage['items']:
                 pools['items'].append(item)
             #virtuals['items'].append(virtualpage['items'])
@@ -128,4 +134,5 @@ if args.topskip:
                 done = True
     print ('Pool Count: %s' % (len(pools['items'])))
     for item in pools['items']:
-        print ('Pool Name: %s' % (item['name']))
+        if args.itemoutput:
+            print ('Pool Name: %s' % (item['name']))
