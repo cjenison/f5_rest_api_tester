@@ -40,7 +40,7 @@ def query_yes_no(question, default="no"):
 parser = argparse.ArgumentParser(description='A tool to identify expiring and soon to expire certs and related config detritus and assist user with pruning it from configuration')
 parser.add_argument('--bigip', help='IP or hostname of BIG-IP Management or Self IP', required=True)
 parser.add_argument('--user', help='username to use for authentication', required=True)
-parser.add_argument('--loops', help='Number of loops', default=1)
+parser.add_argument('--loops', help='Number of loops', type=int, default=1)
 parser.add_argument('--items', help='Items to retrieve when using topskip mode', default=50)
 parser.add_argument('--itemoutput', help='Print item names', default=False)
 parser.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
