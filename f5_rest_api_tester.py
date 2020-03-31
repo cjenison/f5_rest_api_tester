@@ -121,6 +121,7 @@ if args.singlerequest:
     for loop in range(1,args.loops + 1):
         createpool = True
         createvirtual = True
+        print ('Creating objects: %s' % (loop))
         start = time.time()
         if args.getlist:
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
@@ -145,6 +146,7 @@ if args.singlerequest:
         print ('Single Request Run Time: %s' % (runtime))
         print ('Single Request Total Runtime: %s' % (singlerequesttotal))
     for loop in range(args.loops, 0, -1):
+        print ('Deleting objects: %s' % (loop))
         deletePoolPlusVirtual(loop)
 
 topskiptotal = 0
@@ -152,6 +154,7 @@ if args.topskip:
     for loop in range(1,args.loops + 1):
         createpool = True
         createvirtual = True
+        print ('Creating objects: %s' % (loop))
         start = time.time()
         if args.getlist:
             virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
@@ -201,6 +204,7 @@ if args.topskip:
         topskiptotal += runtime
         print ('Top Skip Total Runtime: %s' % (topskiptotal))
     for loop in range(args.loops, 0, -1):
+        print ('Deleting objects: %s' % (loop))
         deletePoolPlusVirtual(loop)
 
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
