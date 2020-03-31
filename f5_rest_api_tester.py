@@ -142,7 +142,7 @@ if args.singlerequest:
         singlerequesttotal += runtime
         print ('Single Request Run Time: %s' % (runtime))
         print ('Single Request Total Runtime: %s' % (singlerequesttotal))
-    for loop in range(args.loops +1, 1, -1):
+    for loop in range(args.loops, 0, -1):
         deletePoolPlusVirtual(loop)
 
 topskiptotal = 0
@@ -197,7 +197,7 @@ if args.topskip:
         print ('Top/Skip Run Time: %s' % (runtime))
         topskiptotal += runtime
         print ('Top Skip Total Runtime: %s' % (topskiptotal))
-    for loop in range(args.loops +1, 1, -1):
+    for loop in range(args.loops, 0, -1):
         deletePoolPlusVirtual(loop)
 
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
