@@ -63,9 +63,6 @@ restpostcount = 0
 restdeletecount = 0
 scriptbegin = time.time()
 
-def convert_bigip_path(path_to_replace):
-    return path_to_replace.replace("/", "~"
-
 def get_auth_token(bigip, username, password):
     authbip = requests.session()
     authbip.verify = False
