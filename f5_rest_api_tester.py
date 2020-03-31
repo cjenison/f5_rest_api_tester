@@ -251,8 +251,14 @@ if args.topskip:
 
 scriptend = time.time()
 scriptruntime = scriptend - scriptbegin
-singlerequestbuildtime = singlerequestbuildend - singlerequestbuildstart
-topskipbuildtime = topskipbuildend - topskipbuildstart
+if args.singlerequest:
+    singlerequestbuildtime = singlerequestbuildend - singlerequestbuildstart
+else:
+    singlerequestbuildtime = 0
+if args.topskip:
+    topskipbuildtime = topskipbuildend - topskipbuildstart
+else:
+    topskipbuildtime = 0
 buildtime = singlerequestbuildtime + topskipbuildtime
 restpostrps = restpostcount / buildtime
 
