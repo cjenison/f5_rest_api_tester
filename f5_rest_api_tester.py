@@ -122,7 +122,7 @@ if args.singlerequest:
         createpool = True
         createvirtual = True
         start = time.time()
-        if not args.getlist:
+        if args.getlist:
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
             print ('Virtual Count: %s' % (len(virtuals['items'])))
             for virtual in virtuals['items']:
@@ -153,7 +153,7 @@ if args.topskip:
         createpool = True
         createvirtual = True
         start = time.time()
-        if not args.getlist:
+        if args.getlist:
             virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
             if virtuals.get('nextLink'):
                 done = False
