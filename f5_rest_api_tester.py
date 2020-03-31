@@ -254,7 +254,7 @@ print ('Total REST DELETE requests: %s' % (restdeletecount))
 restrequests = restgetcount + restpostcount + restdeletecount
 print ('Total REST requests: %s' % (restrequests))
 print ('Script execution time: %s' % (scriptruntime))
-requestspersec = restrequest / scriptruntime
+requestspersec = restrequests / scriptruntime
 print ('Script REST requests per second: %s' % (requestspersec))
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
 print ('Top Skip Total Runtime: %s' % (topskiptotal))
