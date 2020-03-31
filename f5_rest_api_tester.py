@@ -127,6 +127,7 @@ for loop in range(1,args.loops):
         for member in range(1,args.poolmembers):
             memberDict = {}
             memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+            print ('Member loop variable: %s' % (member))
             bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, loop), headers=contentJsonHeader, data=json.dumps(memberDict))
         virtualDict = {}
         virtualDict['name'] = '%s%s' % (virtualprefix, loop)
