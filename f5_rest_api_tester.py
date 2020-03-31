@@ -150,6 +150,7 @@ poolerrorcount = 0
 membererrorcount = 0
 singlerequesttotal = 0
 if args.singlerequest:
+    singlerequestbuildstart = time.time()
     for loop in range(1,args.loops + 1):
         createpool = True
         createvirtual = True
@@ -179,12 +180,14 @@ if args.singlerequest:
         singlerequesttotal += runtime
         print ('Single Request Run Time: %s' % (runtime))
         print ('Single Request Total Runtime: %s' % (singlerequesttotal))
+    singlerequestbuildend = time.time()
     for loop in range(args.loops, 0, -1):
         print ('Deleting objects: %s' % (loop))
         deletePoolPlusVirtual(loop)
 
 topskiptotal = 0
 if args.topskip:
+    topskipbuildstart = time.time()
     for loop in range(1,args.loops + 1):
         createpool = True
         createvirtual = True
@@ -241,17 +244,24 @@ if args.topskip:
         print ('Top/Skip Run Time: %s' % (runtime))
         topskiptotal += runtime
         print ('Top Skip Total Runtime: %s' % (topskiptotal))
+    topskipbuildend = time.time()
     for loop in range(args.loops, 0, -1):
         print ('Deleting objects: %s' % (loop))
         deletePoolPlusVirtual(loop)
 
 scriptend = time.time()
 scriptruntime = scriptend - scriptbegin
+singlerequestbuildtime = singlerequestbuildend - singlerequestbuildstart
+topskipbuildtime = topskipbuildend - topskipbuildstart
+buildtime = singlerequestbuildtime + topskipbuildtime
+restpostrps = restpostcount / buildtime
+
 
 print ('Total REST GET requests: %s' % (restgetcount))
 print ('Total REST POST requests: %s' % (restpostcount))
 print ('Total REST DELETE requests: %s' % (restdeletecount))
 restrequests = restgetcount + restpostcount + restdeletecount
+print ('POST requests per second: %s' % (restpostrps))
 print ('Total REST requests: %s' % (restrequests))
 print ('Script execution time: %s' % (scriptruntime))
 requestspersec = restrequests / scriptruntime
