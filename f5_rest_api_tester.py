@@ -55,6 +55,9 @@ contentJsonHeader = {'Content-Type': "application/json"}
 filename = ''
 poolprefix = 'pool'
 virtualprefix = 'virtual'
+poolerrorcount = 0
+virtualerrorcount = 0
+membererrorcount = 0
 
 def convert_bigip_path(path_to_replace):
     return path_to_replace.replace("/", "~")
