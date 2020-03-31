@@ -92,17 +92,32 @@ def createPoolPlusVirtual(index):
     poolDict = {}
     poolDict['name'] = '%s%s' % (poolprefix, index)
     poolDict['monitor'] = '/Common/tcp_half_open'
-    bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+    poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+    if poolpost.status_code == 200:
+        print ('Successfully Created Pool: %s%s' % (poolprefix, index))
+    else:
+        print ('Problem creating Pool: %s%s - response: %s' % (poolprefix, index, poolpost.content))
+        poolerrorcount += 1
     for member in range(1,args.poolmembers + 1):
         memberDict = {}
         memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
-        bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+        memberpost = bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+        if memberpost.status_code == 200:
+            print ('Successfully Created Pool: %s%s Member: %s%s:%s' % (poolprefix, index, args.poolipprefix, member, port))
+        else:
+            print ('Problem creating Pool: %s%s Member: %s%s%s- response: %s' % (poolprefix, index, args.poolipprefix, member, port, memberpost.content))
+            membererrorcount += 1
     virtualDict = {}
     virtualDict['name'] = '%s%s' % (virtualprefix, index)
     virtualDict['destination'] = '10.0.0.1:%s' % (port)
     virtualDict['pool'] = '%s%s' % (poolprefix, index)
     virtualDict['profiles'] = 'f5-tcp-lan'
-    bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
+    virtualpost = bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
+    if virtualpost.status_code == 200:
+        print ('Successfully Created Virtual: %s%s' % (virtualprefix, index))
+    else:
+        print ('Problem creating Virtual: %s%s - response: %s' % (virtualprefix, index, virtualpost.content))
+        virtualerrorcount += 1
 
 user = args.user
 password = getpass.getpass("Password for " + user + ":")
@@ -116,6 +131,9 @@ bip.verify = False
 requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
+virtualerrorcount = 0
+poolerrorcount = 0
+membererrorcount = 0
 singlerequesttotal = 0
 if args.singlerequest:
     for loop in range(1,args.loops + 1):
