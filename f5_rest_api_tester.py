@@ -82,8 +82,8 @@ def get_auth_token(bigip, username, password):
     return token
 
 def deletePoolPlusVirtual(index):
-    bip.delete('%s/ltm/pool/%s%s' % (url_base, poolprefix, index))
     bip.delete('%s/ltm/virtual/%s%s' % (url_base, virtualprefix, index))
+    bip.delete('%s/ltm/pool/%s%s' % (url_base, poolprefix, index))
     print('Deleted Pool: %s%s - Deleted Virtual: %s%s' % (poolprefix, index, virtualprefix, index))
 
 def createPoolPlusVirtual(index):
