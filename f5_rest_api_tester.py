@@ -81,6 +81,28 @@ def get_auth_token(bigip, username, password):
         quit()
     return token
 
+def deletePoolPlusVirtual(index):
+    bip.delete('%s/ltm/pool/%s%s' % (url_base, poolprefix, index))
+    bip.delete('%s/ltm/virtual/%s%s' % (url_base, virtualprefix, index))
+    print('Deleted Pool: %s%s - Deleted Virtual: %s%s' % (poolprefix, index, virtualprefix, index))
+
+def createPoolPlusVirtual(index):
+    port = 10000 + index
+    poolDict = {}
+    poolDict['name'] = '%s%s' % (poolprefix, index)
+    poolDict['monitor'] = '/Common/tcp_half_open'
+    bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+    for member in range(1,args.poolmembers + 1):
+        memberDict = {}
+        memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+        bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+    virtualDict = {}
+    virtualDict['name'] = '%s%s' % (virtualprefix, index)
+    virtualDict['destination'] = '10.0.0.1:%s' % (port)
+    virtualDict['pool'] = '%s%s' % (poolprefix, index)
+    virtualDict['profiles'] = 'f5-tcp-lan'
+    bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
+
 user = args.user
 password = getpass.getpass("Password for " + user + ":")
 bip = requests.session()
@@ -94,11 +116,10 @@ requests.packages.urllib3.disable_warnings()
 url_base = ('https://%s/mgmt/tm' % (args.bigip))
 
 singlerequesttotal = 0
-for loop in range(1,args.loops):
-    createpool = True
-    createvirtual = True
-    port = 10000 + loop
-    if args.singlerequest:
+if args.singlerequest:
+    for loop in range(1,args.loops + 1):
+        createpool = True
+        createvirtual = True
         start = time.time()
         virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
         print ('Virtual Count: %s' % (len(virtuals['items'])))
@@ -114,30 +135,21 @@ for loop in range(1,args.loops):
                 createpool = False
             if args.itemoutput:
                 print('Pool Name: %s' % (pool['name']))
+        if createpool and createvirtual:
+            createPoolPlusVirtual(loop)
         end = time.time()
         runtime = end - start
         singlerequesttotal += runtime
         print ('Single Request Run Time: %s' % (runtime))
         print ('Single Request Total Runtime: %s' % (singlerequesttotal))
-    if createpool and createvirtual:
-        poolDict = {}
-        poolDict['name'] = '%s%s' % (poolprefix, loop)
-        poolDict['monitor'] = '/Common/tcp_half_open'
-        bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
-        for member in range(1,args.poolmembers + 1):
-            memberDict = {}
-            memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
-            bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, loop), headers=contentJsonHeader, data=json.dumps(memberDict))
-        virtualDict = {}
-        virtualDict['name'] = '%s%s' % (virtualprefix, loop)
-        virtualDict['destination'] = '10.0.0.1:%s' % (port)
-        virtualDict['pool'] = '%s%s' % (poolprefix, loop)
-        virtualDict['profiles'] = 'f5-tcp-lan'
-        bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
+    for loop in range(arg.loops +1, 1, -1)
+        deletePoolPlusVirtual(loop)
 
 topskiptotal = 0
-for loop in range(1,args.loops):
-    if args.topskip:
+if args.topskip:
+    for loop in range(1,args.loops + 1):
+        createpool = True
+        createvirtual = True
         end = time.time()
         virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
         if virtuals.get('nextLink'):
@@ -155,6 +167,8 @@ for loop in range(1,args.loops):
                     #print ('Got all items')
         print ('Virtual Count: %s' % (len(virtuals['items'])))
         for item in virtuals['items']:
+            if virtual['name'] == '%s%s' % (virtualprefix, loop):
+                createvirtual = False
             if args.itemoutput:
                 print ('Virtual Name: %s' % (item['name']))
         pools = bip.get('%s/ltm/pool?$top=%s' % (url_base, args.items) ).json()
@@ -172,13 +186,19 @@ for loop in range(1,args.loops):
                     done = True
         print ('Pool Count: %s' % (len(pools['items'])))
         for item in pools['items']:
+            if pool['name'] == '%s%s' % (poolprefix, loop):
+                createpool = False
             if args.itemoutput:
                 print ('Pool Name: %s' % (item['name']))
+        if createpool and createvirtual:
+            createPoolPlusVirtual(loop)
         end = time.time()
         runtime = end - start
         print ('Top/Skip Run Time: %s' % (runtime))
         topskiptotal += runtime
         print ('Top Skip Total Runtime: %s' % (topskiptotal))
+    for loop in range(arg.loops +1, 1, -1)
+        deletePoolPlusVirtual(loop)
 
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
 print ('Top Skip Total Runtime: %s' % (topskiptotal))
