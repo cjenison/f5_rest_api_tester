@@ -227,3 +227,6 @@ if args.topskip:
 
 print ('Single Request Total Runtime: %s' % (singlerequesttotal))
 print ('Top Skip Total Runtime: %s' % (topskiptotal))
+print ('Virtual Error Count: %s' % (virtualerrorcount))
+print ('Pool Error Count: %s' % (poolerrorcount))
+print ('Member Error Count: %s' % (membererrorcount))
