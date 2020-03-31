@@ -100,7 +100,7 @@ def createPoolPlusVirtual(index):
         print ('Successfully Created Pool: %s%s' % (poolprefix, index))
     else:
         print ('Problem creating Pool: %s%s - response: %s' % (poolprefix, index, poolpost.content))
-        poolerrorcount += 1
+        global poolerrorcount += 1
     for member in range(1,args.poolmembers + 1):
         memberDict = {}
         memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
@@ -109,7 +109,7 @@ def createPoolPlusVirtual(index):
             print ('Successfully Created Pool: %s%s Member: %s%s:%s' % (poolprefix, index, args.poolipprefix, member, port))
         else:
             print ('Problem creating Pool: %s%s Member: %s%s%s- response: %s' % (poolprefix, index, args.poolipprefix, member, port, memberpost.content))
-            membererrorcount += 1
+            global membererrorcount += 1
     virtualDict = {}
     virtualDict['name'] = '%s%s' % (virtualprefix, index)
     virtualDict['destination'] = '10.0.0.1:%s' % (port)
@@ -120,7 +120,7 @@ def createPoolPlusVirtual(index):
         print ('Successfully Created Virtual: %s%s' % (virtualprefix, index))
     else:
         print ('Problem creating Virtual: %s%s - response: %s' % (virtualprefix, index, virtualpost.content))
-        virtualerrorcount += 1
+        global virtualerrorcount += 1
 
 user = args.user
 password = getpass.getpass("Password for " + user + ":")
