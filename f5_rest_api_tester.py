@@ -178,7 +178,7 @@ if args.singlerequest:
             restgetexecutiontime += time.time() - restgetliststart
             if restgetexecutiontime > restgetworst:
                 restgetworst = restgetexecutiontime
-            if restgetexcutiontime < restgetbest:
+            if restgetexecutiontime < restgetbest:
                 restgetbest = restgetexecutiontime
             restgetcount += 1
             print ('Virtual Count: %s' % (len(virtuals['items'])))
