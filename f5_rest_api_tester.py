@@ -59,6 +59,7 @@ poolerrorcount = 0
 virtualerrorcount = 0
 membererrorcount = 0
 restgetcount = 0
+restgetexecutiontime = 0
 restpostcount = 0
 restdeletecount = 0
 scriptbegin = time.time()
@@ -160,7 +161,10 @@ if args.singlerequest:
         print ('Creating objects: %s' % (loop))
         start = time.time()
         if args.getlist:
+            restgetliststart = time.time()
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
+            restgetlistend = time.time()
+            restgetexecutiontime += resgetlistend - restgetliststart
             restgetcount += 1
             print ('Virtual Count: %s' % (len(virtuals['items'])))
             for virtual in virtuals['items']:
@@ -199,14 +203,20 @@ if args.topskip:
         print ('Creating objects: %s' % (loop))
         start = time.time()
         if args.getlist:
+            restgetliststart = time.time()
             virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
+            restgetlistend = time.time()
+            restgetexecutiontime += resgetlistend - restgetliststart
             restgetcount += 1
             if virtuals.get('nextLink'):
                 done = False
                 while (not done ):
                     itemsretrieved = len(virtuals['items'])
                     #print ('Items retrieved: %s' % (itemsretrieved))
+                    restgetliststart = time.time()
                     virtualpage = bip.get('%s/ltm/virtual?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
+                    restgetlistend = time.time()
+                    restgetexecutiontime += resgetlistend - restgetliststart
                     restgetcount += 1
                     #print ('virtualpage item count: %s' % (len(virtualpage['items'])))
                     for item in virtualpage['items']:
