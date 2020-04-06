@@ -296,7 +296,7 @@ restpostrps = restpostcount / buildtime
 deletetime = singlerequestdeletetime + topskipdeletetime
 deleterps = restdeletecount / deletetime
 
-print ('Total REST GET requests: %s' % (restgetcount)
+print ('Total REST GET requests: %s' % (restgetcount))
 if args.getlist:
     restgetresponsetime = restgetexecutiontime / restgetcount
     print ('Average REST GET response time: %s' % (restgetresponsetime))
