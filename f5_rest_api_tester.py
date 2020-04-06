@@ -60,6 +60,9 @@ virtualerrorcount = 0
 membererrorcount = 0
 restgetcount = 0
 restgetexecutiontime = 0
+## Below two variables are set at extremes to catch best case and worst case execution
+restgetbest = 1000
+restgetworst = 0
 restpostcount = 0
 restpostexecutiontime = 0
 restdeletecount = 0
@@ -173,6 +176,10 @@ if args.singlerequest:
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
             restgetlistend = time.time()
             restgetexecutiontime += time.time() - restgetliststart
+            if restgetexecutiontime > restgetworst:
+                restgetworst = restgetexecutiontime
+            if restgetexcutiontime < restgetbest:
+                restgetbest = restgetexecutiontime
             restgetcount += 1
             print ('Virtual Count: %s' % (len(virtuals['items'])))
             for virtual in virtuals['items']:
@@ -289,7 +296,7 @@ restpostrps = restpostcount / buildtime
 deletetime = singlerequestdeletetime + topskipdeletetime
 deleterps = restdeletecount / deletetime
 
-print ('Total REST GET requests: %s' % (restgetcount))
+print ('Total REST GET requests: %s' % (restgetcount)
 if args.getlist:
     restgetresponsetime = restgetexecutiontime / restgetcount
     print ('Average REST GET response time: %s' % (restgetresponsetime))
