@@ -282,6 +282,8 @@ deletetime = singlerequestdeletetime + topskipdeletetime
 deleterps = restdeletecount / deletetime
 
 print ('Total REST GET requests: %s' % (restgetcount))
+restgetresponsetime = restgetexecutiontime / restgetcount
+print ('Average REST GET response time: %s' % (restgetresponsetime))
 print ('Total REST POST requests: %s' % (restpostcount))
 print ('Total REST DELETE requests: %s' % (restdeletecount))
 restrequests = restgetcount + restpostcount + restdeletecount
