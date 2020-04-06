@@ -295,7 +295,7 @@ if args.getlist:
     print ('Average REST GET response time: %s' % (restgetresponsetime))
 print ('Total REST POST requests: %s' % (restpostcount))
 restpostresponsetime = restpostexecutiontime / restpostcount
-print ('Average POST request response time: %s' % (postreqresponsetime))
+print ('Average POST request response time: %s' % (restpostresponsetime))
 print ('Total REST DELETE requests: %s' % (restdeletecount))
 restrequests = restgetcount + restpostcount + restdeletecount
 print ('POST requests per second: %s' % (restpostrps))
