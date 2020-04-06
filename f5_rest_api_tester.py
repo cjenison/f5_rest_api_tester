@@ -172,7 +172,7 @@ if args.singlerequest:
             restgetliststart = time.time()
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
             restgetlistend = time.time()
-            restgetexecutiontime += resgetlistend - restgetliststart
+            restgetexecutiontime += time.time() - restgetliststart
             restgetcount += 1
             print ('Virtual Count: %s' % (len(virtuals['items'])))
             for virtual in virtuals['items']:
