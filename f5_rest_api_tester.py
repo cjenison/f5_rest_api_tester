@@ -300,6 +300,8 @@ print ('Total REST GET requests: %s' % (restgetcount))
 if args.getlist:
     restgetresponsetime = restgetexecutiontime / restgetcount
     print ('Average REST GET response time: %s' % (restgetresponsetime))
+    print ('Best REST GET response time: %s' % (restgetbest))
+    print ('Worst REST GET response time: %s' % (restgetworst))
 print ('Total REST POST requests: %s' % (restpostcount))
 restpostresponsetime = restpostexecutiontime / restpostcount
 print ('Average POST request response time: %s' % (restpostresponsetime))
