@@ -105,7 +105,7 @@ def createPoolPlusVirtual(index):
     poolDict = {}
     poolDict['name'] = '%s%s' % (poolprefix, index)
     poolDict['monitor'] = '/Common/tcp_half_open'
-    restportstarttime = time.time()
+    restpoststarttime = time.time()
     poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
     restpostexecutiontime += time.time() - restpoststarttime
     restpostcount += 1
