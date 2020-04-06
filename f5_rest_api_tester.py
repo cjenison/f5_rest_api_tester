@@ -187,7 +187,14 @@ if args.singlerequest:
                     createvirtual = False
                 if args.itemoutput:
                     print('Virtual Name: %s' % (virtual['name']))
+            restgetliststart = time.time()
             pools = bip.get('%s/ltm/pool' % (url_base) ).json()
+            restgetlistend = time.time()
+            restgetexecutiontime += time.time() - restgetliststart
+            if restgetexecutiontime > restgetworst:
+                restgetworst = restgetexecutiontime
+            if restgetexecutiontime < restgetbest:
+                restgetbest = restgetexecutiontime
             restgetcount += 1
             print ('Pool Count: %s' % (len(pools['items'])))
             for pool in pools['items']:
