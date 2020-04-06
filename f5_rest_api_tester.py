@@ -61,6 +61,7 @@ membererrorcount = 0
 restgetcount = 0
 restgetexecutiontime = 0
 restpostcount = 0
+restpostexecutiontime = 0
 restdeletecount = 0
 scriptbegin = time.time()
 
@@ -99,11 +100,14 @@ def createPoolPlusVirtual(index):
     global membererrorcount
     global virtualerrorcount
     global restpostcount
+    global restpostexecutiontime
     port = 10000 + index
     poolDict = {}
     poolDict['name'] = '%s%s' % (poolprefix, index)
     poolDict['monitor'] = '/Common/tcp_half_open'
+    restportstarttime = time.time()
     poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+    restpostexecutiontime += time.time() - restpoststarttime
     restpostcount += 1
     if poolpost.status_code == 200:
         print ('Successfully Created Pool: %s%s' % (poolprefix, index))
@@ -114,7 +118,9 @@ def createPoolPlusVirtual(index):
     for member in range(1,args.poolmembers + 1):
         memberDict = {}
         memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+        restpoststarttime = time.time()
         memberpost = bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+        restpostexecutiontime += time.time() - restpoststarttime
         restpostcount += 1
         if memberpost.status_code == 200:
             print ('Successfully Created Pool: %s%s Member: %s%s:%s' % (poolprefix, index, args.poolipprefix, member, port))
@@ -126,7 +132,9 @@ def createPoolPlusVirtual(index):
     virtualDict['destination'] = '10.0.0.1:%s' % (port)
     virtualDict['pool'] = '%s%s' % (poolprefix, index)
     virtualDict['profiles'] = 'f5-tcp-lan'
+    restpoststarttime = time.time()
     virtualpost = bip.post('%s/ltm/virtual' % (url_base), headers=contentJsonHeader, data=json.dumps(virtualDict))
+    restpostexecutiontime += time.time() - restpoststarttime
     restpostcount += 1
     if virtualpost.status_code == 200:
         print ('Successfully Created Virtual: %s%s' % (virtualprefix, index))
@@ -282,9 +290,12 @@ deletetime = singlerequestdeletetime + topskipdeletetime
 deleterps = restdeletecount / deletetime
 
 print ('Total REST GET requests: %s' % (restgetcount))
-restgetresponsetime = restgetexecutiontime / restgetcount
-print ('Average REST GET response time: %s' % (restgetresponsetime))
+if args.getlist:
+    restgetresponsetime = restgetexecutiontime / restgetcount
+    print ('Average REST GET response time: %s' % (restgetresponsetime))
 print ('Total REST POST requests: %s' % (restpostcount))
+restpostresponsetime = restpostexecutiontime / restpostcount
+print ('Average POST request response time: %s' % (postreqresponsetime))
 print ('Total REST DELETE requests: %s' % (restdeletecount))
 restrequests = restgetcount + restpostcount + restdeletecount
 print ('POST requests per second: %s' % (restpostrps))
