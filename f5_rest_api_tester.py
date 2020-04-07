@@ -175,11 +175,12 @@ if args.singlerequest:
             restgetliststart = time.time()
             virtuals = bip.get('%s/ltm/virtual' % (url_base) ).json()
             restgetlistend = time.time()
-            restgetexecutiontime += time.time() - restgetliststart
-            if restgetexecutiontime > restgetworst:
-                restgetworst = restgetexecutiontime
-            if restgetexecutiontime < restgetbest:
-                restgetbest = restgetexecutiontime
+            restgetlisttime = time.time() - restgetlistend
+            restgetexecutiontime += restgetlisttime
+            if restgetlisttime > restgetworst:
+                restgetworst = restgetlisttime
+            if restgetlisttime < restgetbest:
+                restgetbest = restgetlisttime
             restgetcount += 1
             print ('Virtual Count: %s' % (len(virtuals['items'])))
             for virtual in virtuals['items']:
@@ -189,12 +190,12 @@ if args.singlerequest:
                     print('Virtual Name: %s' % (virtual['name']))
             restgetliststart = time.time()
             pools = bip.get('%s/ltm/pool' % (url_base) ).json()
-            restgetlistend = time.time()
-            restgetexecutiontime += time.time() - restgetliststart
-            if restgetexecutiontime > restgetworst:
-                restgetworst = restgetexecutiontime
-            if restgetexecutiontime < restgetbest:
-                restgetbest = restgetexecutiontime
+            restgetlisttime = time.time() - restgetliststart
+            resttgetexecutiontime += restgetlisttime
+            if restgetlisttime > restgetworst:
+                restgetworst = restgetlisttime
+            if restgetlisttime < restgetbest:
+                restgetbest = restgetlisttime
             restgetcount += 1
             print ('Pool Count: %s' % (len(pools['items'])))
             for pool in pools['items']:
@@ -227,8 +228,12 @@ if args.topskip:
         if args.getlist:
             restgetliststart = time.time()
             virtuals = bip.get('%s/ltm/virtual?$top=%s' % (url_base, args.items) ).json()
-            restgetlistend = time.time()
-            restgetexecutiontime += resgetlistend - restgetliststart
+            restgetlisttime = time.time() - restgetliststart
+            if restgetlisttime > restgetworst:
+                restgetworst = restgetlisttime
+            if restgetlisttime < restgetbest:
+                restgetbest = restgetlisttime
+            restgetexecutiontime += restgetlisttime
             restgetcount += 1
             if virtuals.get('nextLink'):
                 done = False
@@ -237,8 +242,12 @@ if args.topskip:
                     #print ('Items retrieved: %s' % (itemsretrieved))
                     restgetliststart = time.time()
                     virtualpage = bip.get('%s/ltm/virtual?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
-                    restgetlistend = time.time()
-                    restgetexecutiontime += resgetlistend - restgetliststart
+                    restgetlisttime = time.time() - resgetliststart
+                    restgetexecutiontime += restgetlisttime
+                    if restgetlisttime > restgetworst:
+                        restgetworst = restgetlisttime
+                    if restgetlisttime < restgetbest:
+                        restgetbest = restgetlisttime
                     restgetcount += 1
                     #print ('virtualpage item count: %s' % (len(virtualpage['items'])))
                     for item in virtualpage['items']:
@@ -253,14 +262,28 @@ if args.topskip:
                     createvirtual = False
                 if args.itemoutput:
                     print ('Virtual Name: %s' % (item['name']))
+            restgetliststart = time.time()
             pools = bip.get('%s/ltm/pool?$top=%s' % (url_base, args.items) ).json()
+            restgetlisttime = time.time() - resgetliststart
+            restgetexecutiontime += restgetlisttime
+            if restgetlisttime > restgetworst:
+                restgetworst = restgetlisttime
+            if restgetlisttime < restgetbest:
+                restgetbest = restgetlisttime
             restgetcount += 1
             if pools.get('nextLink'):
                 done = False
                 while (not done ):
                     itemsretrieved = len(pools['items'])
                     #print ('Items retrieved: %s' % (itemsretrieved))
+                    restgetliststart = time.time()
                     poolpage = bip.get('%s/ltm/pool?$top=%s&$skip=%s' % (url_base, args.items, itemsretrieved) ).json()
+                    restgetlisttime = time.time() - resgetliststart
+                    restgetexecutiontime += restgetlisttime
+                    if restgetlisttime > restgetworst:
+                        restgetworst = restgetlisttime
+                    if restgetlisttime < restgetbest:
+                        restgetbest = restgetlisttime
                     restgetcount += 1
                     #print ('poolpage item count: %s' % (len(poolpage['items'])))
                     for item in poolpage['items']:
