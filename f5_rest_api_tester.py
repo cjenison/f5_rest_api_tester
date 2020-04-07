@@ -191,7 +191,7 @@ if args.singlerequest:
             restgetliststart = time.time()
             pools = bip.get('%s/ltm/pool' % (url_base) ).json()
             restgetlisttime = time.time() - restgetliststart
-            resttgetexecutiontime += restgetlisttime
+            restgetexecutiontime += restgetlisttime
             if restgetlisttime > restgetworst:
                 restgetworst = restgetlisttime
             if restgetlisttime < restgetbest:
