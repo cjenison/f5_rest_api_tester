@@ -48,7 +48,7 @@ parser.add_argument('--items', help='Items to retrieve when using topskip mode',
 parser.add_argument('--itemoutput', help='Print item names', default=False)
 parser.add_argument('--getlist', help='Get list of objects before creating objects', action='store_true')
 parser.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
-parser.add_arguemnt('--poolbulk', action='store_true', help='Create Pool and include members using one HTTP request')
+parser.add_argument('--poolbulk', action='store_true', help='Create Pool and include members using one HTTP request')
 parser.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
 
 args = parser.parse_args()
