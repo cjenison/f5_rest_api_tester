@@ -48,6 +48,7 @@ parser.add_argument('--items', help='Items to retrieve when using topskip mode',
 parser.add_argument('--itemoutput', help='Print item names', default=False)
 parser.add_argument('--getlist', help='Get list of objects before creating objects', action='store_true')
 parser.add_argument('--singlerequest', action='store_true', help='Retrieve Config Objects using a single HTTP request')
+parser.add_arguemnt('--poolbulk', action='store_true', help='Create Pool and include members using one HTTP request')
 parser.add_argument('--topskip', action='store_true', help='Retrieve Config Objects iteratively using top and skip filters')
 
 args = parser.parse_args()
@@ -108,28 +109,43 @@ def createPoolPlusVirtual(index):
     poolDict = {}
     poolDict['name'] = '%s%s' % (poolprefix, index)
     poolDict['monitor'] = '/Common/tcp_half_open'
-    restpoststarttime = time.time()
-    poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
-    restpostexecutiontime += time.time() - restpoststarttime
-    restpostcount += 1
-    if poolpost.status_code == 200:
-        print ('Successfully Created Pool: %s%s' % (poolprefix, index))
-    else:
-        print ('Problem creating Pool: %s%s - response: %s' % (poolprefix, index, poolpost.content))
-        poolerrorcount
-        poolerrorcount += 1
-    for member in range(1,args.poolmembers + 1):
-        memberDict = {}
-        memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+    if args.poolbulk:
+        poolMemberList = []
+        for member in range(1,args.poolmembers + 1):
+            memberDict = {}
+            memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+            poolMemberList.append(memberDict)
+        memberReferenceDict = {}
+        memberReferenceDict['isSubcollection'] = True
+        memberReferenceDict['items'] = poolMemberList
+        poolDict['membersReference'] = memberReferenceDict
         restpoststarttime = time.time()
-        memberpost = bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+        poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
         restpostexecutiontime += time.time() - restpoststarttime
         restpostcount += 1
-        if memberpost.status_code == 200:
-            print ('Successfully Created Pool: %s%s Member: %s%s:%s' % (poolprefix, index, args.poolipprefix, member, port))
+    else:
+        restpoststarttime = time.time()
+        poolpost = bip.post('%s/ltm/pool' % (url_base), headers=contentJsonHeader, data=json.dumps(poolDict))
+        restpostexecutiontime += time.time() - restpoststarttime
+        restpostcount += 1
+        if poolpost.status_code == 200:
+            print ('Successfully Created Pool: %s%s' % (poolprefix, index))
         else:
-            print ('Problem creating Pool: %s%s Member: %s%s%s- response: %s' % (poolprefix, index, args.poolipprefix, member, port, memberpost.content))
-            membererrorcount += 1
+            print ('Problem creating Pool: %s%s - response: %s' % (poolprefix, index, poolpost.content))
+            poolerrorcount
+            poolerrorcount += 1
+        for member in range(1,args.poolmembers + 1):
+            memberDict = {}
+            memberDict['name'] = '%s%s:%s' % (args.poolipprefix, member, port)
+            restpoststarttime = time.time()
+            memberpost = bip.post('%s/ltm/pool/%s%s/members' % (url_base, poolprefix, index), headers=contentJsonHeader, data=json.dumps(memberDict))
+            restpostexecutiontime += time.time() - restpoststarttime
+            restpostcount += 1
+            if memberpost.status_code == 200:
+                print ('Successfully Created Pool: %s%s Member: %s%s:%s' % (poolprefix, index, args.poolipprefix, member, port))
+            else:
+                print ('Problem creating Pool: %s%s Member: %s%s%s- response: %s' % (poolprefix, index, args.poolipprefix, member, port, memberpost.content))
+                membererrorcount += 1
     virtualDict = {}
     virtualDict['name'] = '%s%s' % (virtualprefix, index)
     virtualDict['destination'] = '10.0.0.1:%s' % (port)
