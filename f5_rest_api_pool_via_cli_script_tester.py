@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# f5_rest_api_tester.py
+# f5_rest_api_pool_via_cli_script_tester.py
 # Author: Chad Jenison (c.jenison at f5.com)
 # Version 1.0
 #
@@ -56,6 +56,7 @@ contentJsonHeader = {'Content-Type': "application/json"}
 filename = ''
 poolprefix = 'pool'
 virtualprefix = 'virtual'
+cliScriptName = 'pool-add-remove-members'
 poolerrorcount = 0
 virtualerrorcount = 0
 membererrorcount = 0
